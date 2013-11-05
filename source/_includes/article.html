@@ -1,17 +1,35 @@
-<!-- START OF _includes/article.html -->
-<article>
-	<header>
-		<h1><a href="{{ root_url }}{{ page.url }}">{{ page.title }}</a></h1>
-		<time>{{ page.date | date: "%d %B %Y" }}</time>
-	</header>
-		<div class="content">
-			{{ content }}
-		</div>
-	<footer>
-		{% include post/categories.html %}
-	
-	{% if page.source.url %}via <a href="{{ page.source.url }}">{{ page.source.title }}</a>{% endif %}
-	</footer>
-	
-</article>
-<!-- END OF _includes/article.html -->
+{% unless page.no_header %}
+  <header>
+    {% if index %}
+      {% if post.thumbnail %}
+      <div class="post-thumbnail"><a href="{{ root_url }}{{ post.url }}"><img alt="" src="{{post.thumbnail}}" width="150"/></a></div>
+      {% endif %}
+      <h1 class="entry-title"><a href="{{ root_url }}{{ post.url }}">{% if site.titlecase %}{{ post.title | titlecase }}{% else %}{{ post.title }}{% endif %}</a></h1>
+    {% else %}
+      {% if page.cover and site.cover_width %}
+        <div data-caption="{{ page.cover_caption }}" class="cover-image">
+        {% if page.cover_link %}<a href="{{ page.cover_link }}">{% endif %}<img alt="{% if page.cover_alt %}{{page.cover_alt}}{% endif %}" {% if page.cover_title%}title="{{page.cover_title}}" {% endif %}src="{{ page.cover }}" width="{{ site.cover_width }}"/>{% if page.cover_link %}</a>{% endif %}
+        </div>
+      {% endif %}
+      <h1 class="entry-title">{% if site.titlecase %}{{ page.title | titlecase }}{% else %}{{ page.title }}{% endif %}</h1>
+    {% endif %}
+    {% unless page.meta == false %}
+      <p class="meta">
+        {% include post/date.html %}{{ time }}
+      </p>
+    {% endunless %}
+  </header>
+{% endunless %}
+{% if index %}
+  {% if post.excerpt %}
+  <div class="entry-content">{{ post.excerpt }}</div>
+  {% else %}
+    {% if post.description %}
+    <div class="entry-content">{{ post.description | strip_html | truncatewords: site.excerpt_max_length }}</div>
+    {% else %}
+    <div class="entry-content">{{ content | excerpt | strip_html | truncatewords: site.excerpt_max_length }}</div>
+    {% endif %}
+  {% endif %}
+{% else %}
+<div class="entry-content{% unless page.lettrine == false %} lettrine{% endunless %}{% if page.content_class %} {{ page.content_class }}{% endif %}">{{ content }}</div>
+{% endif %}

@@ -2,22 +2,41 @@
 layout: default
 ---
 
-<!-- START OF index.html -->
-{% assign index = true %}
-	{% for page in paginator.posts %}
-		{% assign content = page.content %}
-		{% include article.html %}
-	{% endfor %}
-	
-<div class="pagination">
-	{% if paginator.next_page %}
-		<a class="older" href="{{ paginator.next_page }}">Older</a>
-	{% endif %}
-	
-	<span class="total">{{ paginator.page }} of {{ paginator.total_pages }}</span>
-	
-	{% if paginator.previous_page %}
-		<a class="newer" href="{{ paginator.previous_page }}">Newer</a>
-	{% endif %}
+<div class="blog-index">
+  {% assign index = true %}
+  {% for post in paginator.posts %}
+  {% assign ind = forloop.index0 | modulo: site.posts_per_row %}
+  {% if ind == 0 %}
+  {% unless forloop.first %}
+  </div>
+  {% endunless %}
+  <div class="row-fluid">
+  {% endif %}
+  {% assign content = post.content %}
+    <article class="span3">
+    <div class="post-box" data-href="{{ root_url }}{{ post.url }}">
+      {% include article.html %}
+    </div>
+    </article>
+  {% endfor %}
+  </div>
+  <div class="pagination">
+    {% if site.pagination_older_right %}
+      {% if paginator.previous_page %}
+      <a class="next" href="{{paginator.previous_page}}">&larr; Newer</a>
+      {% endif %}
+      <a href="/blog/archives" class="hide-mobile">Blog Archives</a>
+      {% if paginator.next_page %}
+      <a class="prev" href="{{paginator.next_page}}">Older &rarr;</a>
+      {% endif %}
+    {% else %}
+      {% if paginator.next_page %}
+      <a class="next" href="{{paginator.next_page}}">&larr; Older</a>
+      {% endif %}
+      <a href="/blog/archives" class="hide-mobile">Blog Archives</a>
+      {% if paginator.previous_page %}
+      <a class="prev" href="{{paginator.previous_page}}">Newer &rarr;</a>
+      {% endif %}
+    {% endif %}
+  </div>
 </div>
-<!-- END OF index.html -->
